@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Studio clock</title>
+  <link href="styles/clock.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div style="text-align: center;"><canvas id="clock"></canvas></div>
+<div id="chiming">
+  <a href="#" id="chimebtn">&#x266b;</a>
+  <div id="chimesetup">
+    <h3>Clock chiming</h3>
+    <a href="#" id="chimeMode0">turned off</a><br/>
+    <a href="#" id="chimeMode1">every hour</a><br/>
+    <a href="#" id="chimeMode2">every half hour</a><br/>
+    <a href="#" id="chimeMode3">every quarter hour</a><br/>
+    <a href="#" id="chimeMode4">every minute</a><br/>
+  </div>
+</div>
+<div id="menu">
+  <a href="#" id="menubtn">&#x2261;</a>
+  <div id="menupopup">
+    <h3>Options</h3>
+    <label><input type="color" id="oncolor"> ON LED</label><br/>
+    <label><input type="color" id="offcolor"> OFF LED</label><br/>
+    <label><input type="color" id="bgcolor"> background</label><br/>
+    <a href="#" id="reset">restore defaults</a><br/>
+    <label><input type="checkbox" id="autosync"> on-line sync</label><br/>
+    <div>current offset: <span id="offset">0</span> ms,<br/>last sync: 
+          <span id="syncstatus">N/A</span>
+    </div>
+  </div>
+</div>
+</body>
+<script src="scripts/base.js"></script>
+<script src="scripts/clock.js"></script>
+<script src="scripts/chiming.js"></script>
+<script src="scripts/options.js"></script>
+</html>

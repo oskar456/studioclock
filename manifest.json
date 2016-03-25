@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "Studio clock",
+  "version": "1.0",
+  "minimum_chrome_version": "23",
+  "icons": {
+    "128": "studioclock-128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "app": {
+    "background": {
+      "scripts": ["main.js"]
+    }
+  }
+}
+

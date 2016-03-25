@@ -1,0 +1,89 @@
+body {
+  background-color: black;
+  color: rgb(200,0,0);
+  margin: 0;
+  padding: 0;
+}
+#chiming {
+  position: absolute;
+  bottom:1pt;
+  right: 1pt;
+}
+#chiming a {
+  color: rgb(200,0,0);
+  text-decoration: none;
+}
+#chimebtn {
+  visibility: hidden;
+  font-size: 200%;
+}
+#chimesetup {
+  visibility: hidden;
+  position: absolute;
+  bottom: 1pt;
+  right: 1pt;
+  padding: 5px;
+  border: solid;
+  background-color: rgb(20, 20, 20);
+  text-align: center;
+}
+#chimesetup h3 {
+  margin: 0;
+}
+#chimesetup a {
+  width: 10em;
+  display: inline-block;
+  margin: 2pt;
+  padding: 5pt;
+  background-color: rgb(40, 40, 40);
+  border-radius: 5pt;
+}
+#menu {
+  position: absolute;
+  bottom:1pt;
+  left: 1pt;
+  color: rgb(200,0,0);
+  text-decoration: none;
+}
+#menu a {
+  color: rgb(200,0,0);
+  text-decoration: none;
+}
+#menubtn {
+  visibility: hidden;
+  font-size: 200%;
+}
+#menupopup {
+  visibility: hidden;
+  position: absolute;
+  bottom: 1pt;
+  left: 1pt;
+  padding: 5px;
+  border: solid;
+  background-color: rgb(20, 20, 20);
+  text-align: left;
+}
+#menupopup h3 {
+  margin: 2pt;
+}
+#menupopup input {
+  background-color: rgb(40, 40, 40);
+  margin: 2pt;
+}
+#menupopup label {
+  width: 15em;
+  display: inline-block;
+  margin: 2pt;
+  padding: 5pt;
+  background-color: rgb(40, 40, 40);
+  border-radius: 5pt;
+}
+#menupopup a {
+  width: 15em;
+  display: inline-block;
+  margin: 2pt;
+  padding: 5pt;
+  text-align: center;
+  background-color: rgb(40, 40, 40);
+  border-radius: 5pt;
+}
