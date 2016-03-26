@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Studio clock",
-  "version": "1.2",
+  "version": "1.3",
   "minimum_chrome_version": "23",
   "offline_enabled": true,
   "icons": {
