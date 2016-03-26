@@ -1,82 +1,102 @@
-offset = 0;
-settings = {
+"use strict";
+var offset = 0;
+var settings = {
     chimeMode: 0,
     bgcolor: '#000000',
     oncolor: '#c80000',
     offcolor: '#280000',
-    autosync: true,
+    autosync: false
 };
+var clk;
+var shouldChime = function() { return null; };
+var onlinesync = onlineSync();
 
 function resizeCanvas() {
-  var viewportWidth = window.innerWidth;
-  var viewportHeight = window.innerHeight;
-  var diameter = Math.min(viewportWidth, viewportHeight);
-  var canvasdiameter = 1.00 * diameter;
-  var canvas = document.getElementById("clock");
-  canvas.setAttribute("width", canvasdiameter);
-  canvas.setAttribute("height", canvasdiameter);
+    var viewportWidth = window.innerWidth;
+    var viewportHeight = window.innerHeight;
+    var diameter = Math.min(viewportWidth, viewportHeight);
+    var canvasdiameter = 1.00 * diameter;
+    var canvas = document.getElementById("clock");
+    canvas.setAttribute("width", canvasdiameter);
+    canvas.setAttribute("height", canvasdiameter);
 }
 
+function optionHandlers(clock) {
+    var menu = document.getElementById("menu");
+    var menubtn = document.getElementById("menubtn");
+    var menupopup = document.getElementById("menupopup");
 
-onlinesync = (function() {
-    var synctimer;
+    menu.onmouseover = function() {
+      menubtn.style.visibility = 'visible';
+    };
+    menu.onmouseout = function() {
+      menubtn.style.visibility = 'hidden';
+    };
+    menu.onmouseover();
+    setTimeout(menu.onmouseout, 10000);
+    menubtn.onclick = function(ev) {
+      menupopup.style.visibility = 'visible';
+      ev.stopPropagation();
+    };
+    window.addEventListener('click', function() {
+      menupopup.style.visibility = 'hidden';
+    });
+    menupopup.onclick = function(ev) {
+        ev.stopPropagation();
+    };
+    var oncolor = document.getElementById("oncolor");
+    oncolor.value = settings.oncolor;
+    clock.led_on = oncolor.value;
+    oncolor.onchange = function() {
+        settings.oncolor = oncolor.value;
+        clock.led_on = oncolor.value;
+        chrome.storage.sync.set({oncolor: oncolor.value});
+    };
+    var offcolor = document.getElementById("offcolor");
+    offcolor.value = settings.offcolor;
+    clock.led_off = offcolor.value;
+    offcolor.onchange = function() {
+        settings.offcolor = offcolor.value;
+        clock.led_off = offcolor.value;
+        chrome.storage.sync.set({offcolor: offcolor.value});
+    };
+    var bgcolor = document.getElementById("bgcolor");
+    bgcolor.value = settings.bgcolor;
+    clock.background = bgcolor.value;
+    bgcolor.onchange = function() {
+        settings.bgcolor = bgcolor.value;
+        clock.background = bgcolor.value;
+        chrome.storage.sync.set({bgcolor: bgcolor.value});
+    };
+    var autosync = document.getElementById("autosync");
+    autosync.checked = settings.autosync;
+    onlinesync(autosync.checked);
+    autosync.onchange = function() {
+        settings.autosync = autosync.checked;
+        onlinesync(autosync.checked);
+        chrome.storage.sync.set({autosync: autosync.checked});
+    };
+    var reset = document.getElementById("reset");
+    reset.onclick = function() {
+        settings.bgcolor = '#000000';
+        settings.oncolor = '#c80000';
+        settings.offcolor = '#280000';
+        oncolor.value = settings.oncolor;
+        offcolor.value = settings.offcolor;
+        bgcolor.value = settings.bgcolor;
+        clock.led_on = oncolor.value;
+        clock.led_off = offcolor.value;
+        clock.background = bgcolor.value;
+        chrome.storage.sync.set(settings);
+    };
+}
 
-    function timesync(callback) {
-          var xmlhttp = new XMLHttpRequest();
-          var localEpoch1, localEpoch2, serverEpoch, success;
-          xmlhttp.open("GET", "https://time.doesnotwork.eu/fcgi/date");
-          xmlhttp.onreadystatechange = function() {
-              if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                  localEpoch2 = new Date().getTime();
-                  serverEpoch = 1000 * Number(xmlhttp.responseText);
-                  success = isFinite(serverEpoch);
-                  if (success) {
-                    offset = serverEpoch - localEpoch1 - (localEpoch2-localEpoch1)/2;
-                  }
-                  if (typeof callback === 'function') {
-                    callback(success);
-                  }
-              }
-          };
-          localEpoch1 = new Date().getTime();
-          xmlhttp.send();
-    }
-    window['timesync'] = timesync;
-
-    function dosync() {
-        // repeat twice for better accurancy
-        timesync(function(){
-            timesync(function(success){
-                document.getElementById('offset').innerHTML =
-                    offset.toLocaleString();
-                document.getElementById('syncstatus').innerHTML =
-                    success?"success":"failure";
-            });
-        });
-    }
-
-    function onlinesync(enable) {
-        if (enable) {
-            dosync();
-            synctimer = setInterval(dosync, 3600000);
-        } else {
-            clearInterval(synctimer);
-            offset = 0;
-            document.getElementById('offset').innerHTML =
-                offset.toLocaleString();
-        }
-    }
-    return onlinesync;
-})();
-
-
-
-function update(domdata) {
+function update() {
     var localnow = new Date().getTime();
     clk.time = new Date(localnow + offset);
     var ms = clk.time.getMilliseconds();
     setTimeout(update, 1000 - ms);
-    var ch = chim.shouldChime(clk.time)
+    var ch = shouldChime(clk.time);
     if (ch !== null ) {
       var to = (ms<900)? (900 - ms):0;
       setTimeout(function (){ch.play();}, to);
@@ -85,21 +105,24 @@ function update(domdata) {
     clk.draw();
 }
 
-window.onresize = function() {
-  resizeCanvas();
-  if (typeof clk !== "undefined") clk.draw();
-}
+window.addEventListener('resize', function() {
+    resizeCanvas();
+    if (typeof clk !== "undefined") {
+        clk.draw();
+    }
+});
 
-window.onload = function() {
-  var canvas = document.getElementById("clock");
-  resizeCanvas();
-  clk = new LEDclock(canvas.getContext("2d"));
-  chrome.storage.sync.get(settings, function(items) {
-      for (i in items) {
-          settings[i] = items[i];
-      }
-      chim = new Chiming(settings.chimeMode);
-      opts = new Options(clk);
-      update();
-  });
-}
+window.addEventListener('load', function() {
+    var i;
+    var canvas = document.getElementById("clock");
+    resizeCanvas();
+    clk = new LEDclock(canvas.getContext("2d"));
+    chrome.storage.sync.get(settings, function(items) {
+        for (i in items) {
+            settings[i] = items[i];
+        }
+        shouldChime = chimerSetup(settings.chimeMode);
+        optionHandlers(clk);
+        update();
+    });
+});
