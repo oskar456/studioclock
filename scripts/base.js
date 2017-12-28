@@ -47,7 +47,7 @@ function optionHandlers(clock) {
     var oncolor = document.getElementById("oncolor");
     oncolor.value = settings.oncolor;
     clock.led_on = oncolor.value;
-    oncolor.onchange = function() {
+    oncolor.oninput = function() {
         settings.oncolor = oncolor.value;
         clock.led_on = oncolor.value;
         chrome.storage.sync.set({oncolor: oncolor.value});
@@ -55,7 +55,7 @@ function optionHandlers(clock) {
     var offcolor = document.getElementById("offcolor");
     offcolor.value = settings.offcolor;
     clock.led_off = offcolor.value;
-    offcolor.onchange = function() {
+    offcolor.oninput = function() {
         settings.offcolor = offcolor.value;
         clock.led_off = offcolor.value;
         chrome.storage.sync.set({offcolor: offcolor.value});
@@ -63,7 +63,7 @@ function optionHandlers(clock) {
     var bgcolor = document.getElementById("bgcolor");
     bgcolor.value = settings.bgcolor;
     clock.background = bgcolor.value;
-    bgcolor.onchange = function() {
+    bgcolor.oninput = function() {
         settings.bgcolor = bgcolor.value;
         clock.background = bgcolor.value;
         chrome.storage.sync.set({bgcolor: bgcolor.value});
