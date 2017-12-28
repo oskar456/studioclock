@@ -37,9 +37,9 @@ function chimerSetup(mode) {
           document.getElementById("chimeMode"+n).onclick = handler;
     }
 
-    beep1.src = "/assets/beep1.ogg";
+    beep1.src = "assets/beep1.ogg";
     beep1.load();
-    beep5.src = "/assets/beep5.ogg";
+    beep5.src = "assets/beep5.ogg";
     beep5.load();
     chiming.onmouseover = function() {
         chimebtn.style.visibility = 'visible';
