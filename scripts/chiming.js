@@ -29,7 +29,7 @@ function chimerSetup(mode) {
             cm.style.fontWeight = (i==mode)?"bold":"normal";
             cm.style.backgroundColor = (i==mode)?"rgb(80, 40, 40)":"rgb(40, 40, 40)";
         }
-        chrome.storage.sync.set({'chimeMode': mode});
+        storagesync.set({'chimeMode': mode});
     }
 
     function attachChimeHandler(n){

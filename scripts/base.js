@@ -10,6 +10,7 @@ var settings = {
 var clk;
 var shouldChime = function() { return null; };
 var onlinesync = onlineSync();
+var storagesync = { get:function(){}, set:function(){} };
 
 function resizeCanvas() {
     var viewportWidth = window.innerWidth;
@@ -50,7 +51,7 @@ function optionHandlers(clock) {
     oncolor.oninput = function() {
         settings.oncolor = oncolor.value;
         clock.led_on = oncolor.value;
-        chrome.storage.sync.set({oncolor: oncolor.value});
+        storagesync.set({oncolor: oncolor.value});
     };
     var offcolor = document.getElementById("offcolor");
     offcolor.value = settings.offcolor;
@@ -58,7 +59,7 @@ function optionHandlers(clock) {
     offcolor.oninput = function() {
         settings.offcolor = offcolor.value;
         clock.led_off = offcolor.value;
-        chrome.storage.sync.set({offcolor: offcolor.value});
+        storagesync.set({offcolor: offcolor.value});
     };
     var bgcolor = document.getElementById("bgcolor");
     bgcolor.value = settings.bgcolor;
@@ -66,7 +67,7 @@ function optionHandlers(clock) {
     bgcolor.oninput = function() {
         settings.bgcolor = bgcolor.value;
         clock.background = bgcolor.value;
-        chrome.storage.sync.set({bgcolor: bgcolor.value});
+        storagesync.set({bgcolor: bgcolor.value});
     };
     var autosync = document.getElementById("autosync");
     autosync.checked = settings.autosync;
@@ -74,7 +75,7 @@ function optionHandlers(clock) {
     autosync.onchange = function() {
         settings.autosync = autosync.checked;
         onlinesync(autosync.checked);
-        chrome.storage.sync.set({autosync: autosync.checked});
+        storagesync.set({autosync: autosync.checked});
     };
     var reset = document.getElementById("reset");
     reset.onclick = function() {
@@ -87,7 +88,7 @@ function optionHandlers(clock) {
         clock.led_on = oncolor.value;
         clock.led_off = offcolor.value;
         clock.background = bgcolor.value;
-        chrome.storage.sync.set(settings);
+        storagesync.set(settings);
     };
 }
 
@@ -117,7 +118,16 @@ window.addEventListener('load', function() {
     var canvas = document.getElementById("clock");
     resizeCanvas();
     clk = new LEDclock(canvas.getContext("2d"));
-    chrome.storage.sync.get(settings, function(items) {
+    update();
+    if (typeof chrome !== 'undefined' &&
+        typeof chrome.storage !== 'undefined') {
+        storagesync = chrome.storage.sync;
+    } else {
+        shouldChime = chimerSetup(settings.chimeMode);
+        optionHandlers(clk);
+        update();
+    }
+    storagesync.get(settings, function(items) {
         for (i in items) {
             settings[i] = items[i];
         }
